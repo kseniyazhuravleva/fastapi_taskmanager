@@ -8,3 +8,7 @@ class User(BaseModel):
 class CreateUser(BaseModel):
     username: str
     password: str
+
+class GetUser(BaseModel):
+    id: int
+    username: str
