@@ -9,11 +9,11 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String, nullable=False)
 
-    # def to_dict(self):
-    #     return {
-    #         "id": self.id,
-    #         "username": self.username
-    #     }
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username
+        }
 
     def __repr__(self):
         return f"id: {self.id}\nusername: {self.username}"

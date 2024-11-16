@@ -4,21 +4,35 @@ import jwt
 
 
 class Token:
-    def __init__(self, private_key):
-        self.private_key = private_key
+    def __init__(self, id, username):
+        self.private_key = settings.PRIVATE_KEY.key
+        self.username = username
+        self.id = id
+
+
+    def __get_token_data(self, token_type='refresh'):
+        iat = datetime.now(timezone.utc)
+
+        data = {
+            "id": self.id,
+            "iat": iat,
+        }
+
+        if token_type == 'access':
+            data['exp'] = iat + timedelta(minutes=60)
+            data['username'] = self.username
+            return data
+        
+        data['exp'] = iat + timedelta(days=30)
+        return data
     
 
-    def gen_token(self):
-        iat = datetime.now(timezone.utc)
-        exp = iat + timedelta(minutes=60)
+    def get_tokens(self):
 
-        encoded = jwt.encode({
-        "password": "somepass",
-        "id": 123,
-        "username": "maksous",
-        "iat": iat,
-        "exp": exp,
-        }, self.private_key, algorithm="RS256")
-        return encoded
+        tokens = {
+            "access_token": jwt.encode(self.__get_token_data(token_type='access'), self.private_key, algorithm="RS256"),
+            "refresh_token": jwt.encode(self.__get_token_data(), self.private_key, algorithm="RS256")
+        }
 
-token = Token(settings.PRIVATE_KEY.key)
+        return tokens
+    
